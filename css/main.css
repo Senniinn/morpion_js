@@ -1,0 +1,17 @@
+tr {
+    height: 150px;
+}
+
+td {
+    width: 150px;
+}
+
+table {
+    margin-top: 5%;
+    margin-left: 30%;
+}
+
+table, th, td {
+    border: 2px solid black;
+}
+

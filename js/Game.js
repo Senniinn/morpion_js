@@ -1,6 +1,8 @@
 module.exports = class Game {
-    constructor(roomId) {
+    constructor(roomId, player1) {
         this.roomId = roomId;
+        this.player1 = player1;
+        this.player2 = null;
         this.moves = 0;
     }
 
@@ -26,6 +28,10 @@ module.exports = class Game {
             document.getElementById(this.id).className = player.getPlayerType();
 
             game.checkWinner();
+
+            for (let i = 1; i < 10; i++) {
+                $(`#button_${i}`).on('click', tileClickHandler);
+            }
         }
     }
     // Remove the menu from DOM, display the gameboard and greet the player.

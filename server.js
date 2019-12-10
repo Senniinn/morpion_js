@@ -6,6 +6,9 @@ const app = express();
 const chat = [];
 let rooms = 0;
 
+
+
+
 //set the template engine ejs
 app.set('view engine', 'ejs');
 
@@ -30,7 +33,7 @@ io.clients((error, clients) => {
     if (error) throw error;
     console.log(clients);
 });
-//listen on every connection
+
 io.on('connection', (socket) => {
     console.log('New user connected');
 
@@ -60,7 +63,9 @@ io.on('connection', (socket) => {
     socket.on('createGame', (data) => {
         console.log("new Game");
         socket.join(`room-${++rooms}`);
-        var player = new Player(data.name, O);
+        var player1 = new Player(data.name, 'O');
+        var game = new Game(`room-${rooms}`,player1);
+        io.sockets.adapter.rooms[`room-${rooms}`].game = game;
         socket.emit('newGame', { name: data.name, room: `room-${rooms}` });
     });
     // Connect the Player 2 to the room he requested. Show error if room full.
@@ -71,8 +76,18 @@ io.on('connection', (socket) => {
             socket.join(data.room);
             socket.broadcast.to(data.room).emit('player1', {});
             socket.emit('player2', { name: data.name, room: data.room });
+            var game = io.sockets.adapter.rooms[`room-${rooms}`].game;
+            game.player2 = new Player(data.name, 'X')
         } else {
             socket.emit('err', { message: 'Sorry, The room is full!' });
         }
+    });
+
+    socket.on('turnPlayed', (data) => {
+        const casee = data.tile.split('_')[1];
+        const opponentType = player.getPlayerType() === P1 ? P2 : P1;
+
+        game.updateBoard(opponentType, casee, data.tile);
+        player.setCurrentTurn(true);
     });
 });

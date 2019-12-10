@@ -1,6 +1,9 @@
+var test = require('./js/main.js');
 const express = require('express');
 const app = express();
 
+console.log(new test());
+const chat = [];
 
 //set the template engine ejs
 app.set('view engine', 'ejs');
@@ -32,7 +35,7 @@ io.on('connection', (socket) => {
 
     //default username
     socket.username = "Anonymous";
-
+    socket.emit('chat', {chat:chat});
     //listen on change_username
     socket.on('change_username', (data) => {
         socket.username = data.username
@@ -40,15 +43,15 @@ io.on('connection', (socket) => {
 
     //listen on new_message
     socket.on('new_message', (data) => {
+        chat.unshift({username: socket.username, message:data.message});
         //broadcast the new message
         io.sockets.emit('new_message', {message : data.message, username : socket.username});
-        console.log(io.clients().connected)
     });
 
     //listen on typing
     socket.on('typing', (data) => {
         socket.broadcast.emit('typing', {username : socket.username})
-    })
+    });
 
     socket.on('play', () => {
         socket.broadcast.emit('game', {game: cejeu})

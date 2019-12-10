@@ -1,4 +1,4 @@
-
+$("#chatroom").animate({ scrollTop: $(this).scrollHeight }, "slow");
 $(function(){
     //make connection
     var socket = io.connect('http://10.8.0.4:3000');
@@ -12,7 +12,8 @@ $(function(){
     var feedback = $("#feedback");
 
     //Emit message
-    send_message.click(function(){
+    send_message.submit(e => {
+        e.preventDefault();
         socket.emit('new_message', {message : message.val()})
     });
 
@@ -20,12 +21,13 @@ $(function(){
     socket.on("new_message", (data) => {
         feedback.html('');
         message.val('');
-        chatroom.append(`<p class='message'>${data.username}: ${data.message}</p>`)
+        chatroom.append(`<h6 class='message'>${data.username}: ${data.message}</h6>`)
     });
 
     //Emit a username
-    send_username.click(function(){
-        socket.emit('change_username', {username : username.val()})
+    send_username.submit(e =>{
+        e.preventDefault();
+        socket.emit('change_username', {username : username.val()});
     });
 
     //Emit typing
@@ -36,6 +38,10 @@ $(function(){
     //Listen on typing
     socket.on('typing', (data) => {
         feedback.html(`<p><i>${data.username} is typing a message...</i></p>`)
+    });
+    //Listen on chat
+    socket.on('chat', (data) => {
+        data.chat.forEach(message => chatroom.append(`<h6 class='message'>${message.username}: ${message.message}</h6>`))
     })
 });
 

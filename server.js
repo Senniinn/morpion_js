@@ -1,9 +1,10 @@
-var test = require('./js/main.js');
+var Player = require('./js/Player.js');
+var Game = require('./js/Game.js');
 const express = require('express');
 const app = express();
 
-console.log(new test());
 const chat = [];
+let rooms = 0;
 
 //set the template engine ejs
 app.set('view engine', 'ejs');
@@ -55,5 +56,23 @@ io.on('connection', (socket) => {
 
     socket.on('play', () => {
         socket.broadcast.emit('game', {game: cejeu})
-    })
+    });
+    socket.on('createGame', (data) => {
+        console.log("new Game");
+        socket.join(`room-${++rooms}`);
+        var player = new Player(data.name, O);
+        socket.emit('newGame', { name: data.name, room: `room-${rooms}` });
+    });
+    // Connect the Player 2 to the room he requested. Show error if room full.
+    socket.on('joinGame', (data) => {
+        console.log("Connexion à la room : " + data.room);
+        const room = io.nsps['/'].adapter.rooms[data.room];
+        if (room && room.length === 1) {
+            socket.join(data.room);
+            socket.broadcast.to(data.room).emit('player1', {});
+            socket.emit('player2', { name: data.name, room: data.room });
+        } else {
+            socket.emit('err', { message: 'Sorry, The room is full!' });
+        }
+    });
 });

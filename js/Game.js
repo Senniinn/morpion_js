@@ -1,4 +1,4 @@
-class Game {
+module.exports = class Game {
     constructor(roomId) {
         this.roomId = roomId;
         this.moves = 0;

@@ -1,19 +1,56 @@
-// server.js
+const express = require('express');
+const app = express();
 
-var express = require('express');
 
-var app = express();
+//set the template engine ejs
+app.set('view engine', 'ejs');
 
-var PORT = 3000;
+//middlewares
+app.use(express.static('public'));
 
-app.get('/', function(req, res) {
-    res.status(200).send('Hello world');
+
+//routes
+app.get('/', (req, res) => {
+    res.render('index')
 });
 
-app.get('/:message', function (req, res) {
-    res.status(200).send(req.params.message);
-});
+//Listen on port 3000
+server = app.listen(3000);
 
-app.listen(PORT, function() {
-    console.log('Server is running on PORT:',PORT);
+
+
+//socket.io instantiation
+const io = require("socket.io")(server);
+
+io.clients((error, clients) => {
+    if (error) throw error;
+    console.log(clients);
+});
+//listen on every connection
+io.on('connection', (socket) => {
+    console.log('New user connected');
+
+    //default username
+    socket.username = "Anonymous";
+
+    //listen on change_username
+    socket.on('change_username', (data) => {
+        socket.username = data.username
+    });
+
+    //listen on new_message
+    socket.on('new_message', (data) => {
+        //broadcast the new message
+        io.sockets.emit('new_message', {message : data.message, username : socket.username});
+        console.log(io.clients().connected)
+    });
+
+    //listen on typing
+    socket.on('typing', (data) => {
+        socket.broadcast.emit('typing', {username : socket.username})
+    })
+
+    socket.on('play', () => {
+        socket.broadcast.emit('game', {game: cejeu})
+    })
 });

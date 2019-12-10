@@ -73,10 +73,10 @@ io.on('connection', (socket) => {
         console.log("Connexion à la room : " + data.room);
         const room = io.nsps['/'].adapter.rooms[data.room];
         if (room && room.length === 1) {
-            socket.join(data.room);
-            socket.broadcast.to(data.room).emit('player1', {});
-            socket.emit('player2', { name: data.name, room: data.room });
             var game = io.sockets.adapter.rooms[`room-${rooms}`].game;
+            socket.join(data.room);
+            socket.broadcast.to(data.room).emit('player1', {name:game.player1.name});
+            socket.emit('player2', { name: data.name, room: data.room });
             game.player2 = new Player(data.name, 'X')
         } else {
             socket.emit('err', { message: 'Sorry, The room is full!' });

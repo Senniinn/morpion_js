@@ -80,7 +80,8 @@ $(function(){
      * This event is received when opponent connects to the room.
      */
     socket.on('player1', (data) => {
-        const message = `Hello, ${player.getPlayerName()}`;
+        console.log("player 2 connecté");
+        const message = `Hello ${data.name}`;
         $('#userHello').html(message);
     });
 

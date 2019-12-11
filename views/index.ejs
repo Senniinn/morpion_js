@@ -19,22 +19,25 @@
             </ol>
             <h4>Create a new Game</h4>
             <form id="new">
-                <label for="username" class="h5">Nom d'utilisateur</label>
                 <div class="input-group">
-                    <input id="username" type="text" class="form-control"/>
+                    <input id="username" type="text" class="form-control" placeholder="Nom d'utilisateur"/>
                     <button type="submit" class="btn btn-secondary input-group-append">Créer partie</button>
                 </div>
             </form>
             <br><br>
             <h4>Join an existing game</h4>
-            <input type="text" name="name" id="nameJoin" placeholder="Enter your name" required>
-            <input type="text" name="room" id="room" placeholder="Enter Game ID" required>
-            <button id="join">Join Game</button>
+            <form id="join">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="name" id="nameJoin" placeholder="Nom d'utilisateur" required>
+                    <input type="text" class="form-control" name="room" id="room" placeholder="Id de la salle" required>
+                    <button id="join" class="btn btn-secondary" type="submit">Rejoindre une salle</button>
+                </div>
+            </form>
         </div>
         <div class="gameBoard col-8" style="display: none;">
             <h2 id="userHello"></h2>
             <h3 id="turn"></h3>
-            <table class="center">
+            <table class="center" id="morpion">
                 <tr>
                     <td><button class="tile" id="button_1"></button></td>
                     <td><button class="tile" id="button_2"></button></td>
@@ -81,6 +84,6 @@
 </div>
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
 <script src="socketio.js"></script>
-<script src="chat.js"></script>
+<script src="front.js"></script>
 </body>
 </html>

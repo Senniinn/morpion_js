@@ -55,7 +55,8 @@ $(function(){
     });
 
     // Join an existing game on the entered roomId. Emit the joinGame event.
-    $('#join').on('click', () => {
+    $('#join').on('submit', (e) => {
+        e.preventDefault();
         const name = $('#nameJoin').val();
         const roomID = $('#room').val();
         if (!name || !roomID) {
@@ -64,7 +65,9 @@ $(function(){
         }
         socket.emit('joinGame', { name, room: roomID });
     });
-
+    $('#morpion').find("button").on('click', (event) => {
+        socket.emit('case_clicked', { buttonId: event.target.id.split("_")[1] });
+    });
     // New Game created by current client. Update the UI and create new Game var.
     socket.on('newGame', (data) => {
         const message =
@@ -116,12 +119,6 @@ $(function(){
         socket.leave(data.room);
     });
 
-    /**
-     * End the game on any err event.
-     */
-    socket.on('err', (data) => {
-        game.endGame(data.message);
-    });
+    socket.on('err', data => alert(data.message));
 });
-
 

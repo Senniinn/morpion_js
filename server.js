@@ -63,6 +63,7 @@ io.on('connection', (socket) => {
     socket.on('createGame', (data) => {
         console.log("new Game");
         socket.join(`room-${++rooms}`);
+        socket.player = "j1";
         var player1 = new Player(data.name, 'O');
         var game = new Game(`room-${rooms}`,player1);
         io.sockets.adapter.rooms[`room-${rooms}`].game = game;
@@ -72,15 +73,26 @@ io.on('connection', (socket) => {
     socket.on('joinGame', (data) => {
         console.log("Connexion à la room : " + data.room);
         const room = io.nsps['/'].adapter.rooms[data.room];
-        if (room && room.length === 1) {
-            var game = io.sockets.adapter.rooms[`room-${rooms}`].game;
-            socket.join(data.room);
-            socket.broadcast.to(data.room).emit('player1', {name:game.player1.name});
-            socket.emit('player2', { name: data.name, room: data.room });
-            game.player2 = new Player(data.name, 'X')
-        } else {
-            socket.emit('err', { message: 'Sorry, The room is full!' });
+        if (room) {
+            if(room.length === 1) {
+                var game = io.sockets.adapter.rooms[`room-${rooms}`].game;
+                socket.join(data.room);
+                socket.player = "j2";
+                socket.broadcast.to(data.room).emit('player1', {name:game.player1.name});
+                socket.emit('player2', { name: data.name, room: data.room });
+                game.player2 = new Player(data.name, 'X')
+            } else {
+                socket.emit('err', { message: 'Sorry, The room is full!' });
+            }
         }
+        else {
+            socket.emit('err', { message: 'La salle n\'existe pas'});
+        }
+    });
+
+    socket.on('case_clicked', (data) => {
+        var game = io.sockets.adapter.rooms[`room-${rooms}`].game;
+        game.updateBoard(socket.player, data.buttonId);
     });
 
     socket.on('turnPlayed', (data) => {

@@ -124,7 +124,6 @@ $(function(){
             $('#button_'+index).empty().append(casee);
         });
         $('.tile').prop("disabled", true);
-        console.log(data.board);
     });
 
     socket.on('err', data => alert(data.message));

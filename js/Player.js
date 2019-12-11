@@ -35,11 +35,14 @@ module.exports = class Player {
     }
 
   getPlayerType() {
-      if (this.type === "X"){
-          return "/img/croix.png";
-      } else {
-        return "/img/cercle.png";
-      }
+      return this.type;
+  }
+  getPLayerImg() {
+    if (this.type === "X"){
+      return "/img/croix.png";
+    } else {
+      return "/img/cercle.png";
+    }
   }
 
   getCurrentTurn() {

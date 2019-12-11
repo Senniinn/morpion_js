@@ -5,6 +5,7 @@ module.exports = class Game {
         this.player2 = null;
         this.moves = 0;
         this.board = ['', '', '', '', '', '', '', '', ''];
+        this.inGameBoard = ['', '', '', '', '', '', '', '', ''];
     }
 
 
@@ -21,7 +22,7 @@ module.exports = class Game {
 
     // Remove the menu from DOM, display the gameboard and greet the player.
     displayBoard() {
-        return this.board;
+        return this.inGameBoard;
     }
 
     getRoomId() {
@@ -33,12 +34,17 @@ module.exports = class Game {
             return this.player1;
         return this.player2;
     }
-    updateBoard(type, casee) {
-        this.board[casee] = "<img src='" + type + "' />";
+    updateBoard(type, img, casee) {
+        this.board[casee] = type;
+        this.inGameBoard[casee] = "<img src='" + img + "' class='img-fluid'/>";
         this.moves++;
         var winner = this.checkWinner();
+
+
         if(winner !== null)
             return {board: this.displayBoard(), win:winner};
+
+
 
         return this.displayBoard();
     }

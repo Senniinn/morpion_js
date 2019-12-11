@@ -102,7 +102,7 @@ io.on('connection', (socket) => {
             }
             else {
                 game.changeTurn();
-                var board = game.updateBoard(game.findPlayer(socket.player).getPlayerType(), data.buttonId);
+                var board = game.updateBoard(game.findPlayer(socket.player).getPlayerType(), game.findPlayer(socket.player).getPLayerImg(),data.buttonId);
                 if(board.win !== undefined) {
                     io.sockets.to(game.roomId).emit('update_board', {board: board.board});
                     io.sockets.to(game.roomId).emit('gameEnd', {message: board.win});

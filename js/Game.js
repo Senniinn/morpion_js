@@ -5,10 +5,24 @@ module.exports = class Game {
         this.player2 = null;
         this.moves = 0;
         this.board = ['', '', '', '', '', '', '', '', ''];
+        this.inGameBoard = ['', '', '', '', '', '', '', '', ''];
     }
 
+
+
+    changeTurn(){
+        if (this.player1.currentTurn === true && this.player2.currentTurn === false){
+            this.player1.currentTurn = false;
+            this.player2.currentTurn = true;
+        } else {
+            this.player1.currentTurn = true;
+            this.player2.currentTurn = false;
+        }
+    }
+
+    // Remove the menu from DOM, display the gameboard and greet the player.
     displayBoard() {
-        return this.board;
+        return this.inGameBoard;
     }
 
     getRoomId() {
@@ -17,15 +31,20 @@ module.exports = class Game {
 
     findPlayer(name) {
         if(name === this.player1.getPlayerName())
-            return this.player1.getPlayerType();
-        return this.player2.getPlayerType();
+            return this.player1;
+        return this.player2;
     }
-    updateBoard(type, casee) {
+    updateBoard(type, img, casee) {
         this.board[casee] = type;
+        this.inGameBoard[casee] = "<img src='" + img + "' class='img-fluid'/>";
         this.moves++;
         var winner = this.checkWinner();
+
+
         if(winner !== null)
             return {board: this.displayBoard(), win:winner};
+
+
 
         return this.displayBoard();
     }

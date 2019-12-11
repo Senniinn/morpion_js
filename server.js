@@ -59,6 +59,7 @@ io.on('connection', (socket) => {
         console.log("new Game");
         socket.join(`room-${++rooms}`);
         socket.player = "j1";
+        socket.playerRoom = `room-${rooms}`;
         var player1 = new Player(data.name, "j1", 'X');
         var game = new Game(`room-${rooms}`,player1);
         socket.username = player1.getPlayerUsername();
@@ -71,10 +72,11 @@ io.on('connection', (socket) => {
         const room = io.nsps['/'].adapter.rooms[data.room];
         if (room) {
             if(room.length === 1) {
-                var game = io.sockets.adapter.rooms[`room-${rooms}`].game;
+                var game = io.sockets.adapter.rooms[`${data.room}`].game;
                 socket.join(data.room);
+                socket.playerRoom = data.room;
                 socket.player = "j2";
-                socket.broadcast.to(data.room).emit('player1', {name:game.player1.name});
+                socket.broadcast.to(data.room).emit('player1', {name:game.player1.username});
                 socket.emit('player2', { name: data.name, room: data.room });
                 game.player2 = new Player(data.name, "j2", 'O')
                 socket.username = game.player2.getPlayerUsername();
@@ -89,16 +91,31 @@ io.on('connection', (socket) => {
 
     socket.on('case_clicked', (data) => {
         var game = io.sockets.adapter.rooms[`room-${rooms}`].game;
-        var  board = game.updateBoard(game.findPlayer(socket.player), data.buttonId);
-        if(board.win !== undefined) {
-            io.sockets.to(game.roomId).emit('update_board', {board: board.board});
-            io.sockets.to(game.roomId).emit('gameEnd', {message: board.win});
-        } else {
-            io.sockets.to(game.roomId).emit('update_board', {board: board});
+        var playerTurn = game.findPlayer(socket.player).getCurrentTurn();
+        if (playerTurn === false) {
+            socket.emit('err', {message: "ce n'est pas votre tour"})
+        }else {
+            if (game.board[data.buttonId] !== '') {
+                socket.emit('err', {message: "case deja cliqué"})
+            }
+            else {
+                game.changeTurn();
+                var board = game.updateBoard(game.findPlayer(socket.player).getPlayerType(), game.findPlayer(socket.player).getPLayerImg(),data.buttonId);
+                if(board.win !== undefined) {
+                    io.sockets.to(game.roomId).emit('update_board', {board: board.board});
+                    io.sockets.to(game.roomId).emit('gameEnd', {message: board.win});
+                } else {
+                    io.sockets.to(game.roomId).emit('update_board', {board: board});
+                    socket.broadcast.to(game.roomId).emit('change_turn');
+                }
+            }
         }
     });
 
     socket.on('turnPlayed', (data) => {
 
+    });
+    socket.on('leave_room', (data) => {
+        socket.leave();
     });
 });

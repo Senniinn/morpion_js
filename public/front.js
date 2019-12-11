@@ -1,7 +1,7 @@
 // $("#chatroom").animate({ scrollTop: $(this).scrollHeight }, "slow");
 $(function(){
     //make connection
-    var socket = io.connect('http://10.8.0.2:3000');
+    var socket = io.connect('http://127.0.0.1:3000');
 
     //buttons and inputs
     var message = $("#message");
@@ -65,7 +65,7 @@ $(function(){
             return;
         }
         socket.emit('joinGame', { name, room: roomID });
-        $('.tile').prop("disabled", false);
+        $('.tile').prop("disabled", true);
     });
     $('#morpion').find("button").on('click', (event) => {
         socket.emit('case_clicked', { buttonId: event.target.id.split("_")[1] });
@@ -101,26 +101,31 @@ $(function(){
         $('.menu').css('display', 'none');
         $('.gameBoard').css('display', 'block');
         $('#userHello').html(message);
+        $('.tile').prop("disabled", true);
     });
 
     /**
      * Opponent played his turn. Update UI.
      * Allow the current player to play now.
      */
-    socket.on('turnPlayed', (data) => {
-
+    socket.on('change_turn', () => {
+        $('.tile').prop("disabled", false);
     });
 
     // If the other player wins, this event is received. Notify user game has ended.
     socket.on('gameEnd', (data) => {
         alert(data.message);
+        socket.emit('leave_room');
+        location.reload();
     });
+
+
 
     socket.on('update_board', (data) => {
         data.board.forEach((casee, index)=>{
             $('#button_'+index).empty().append(casee);
         });
-        console.log(data.board);
+        $('.tile').prop("disabled", true);
     });
 
     socket.on('err', data => alert(data.message));

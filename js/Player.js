@@ -36,9 +36,9 @@ module.exports = class Player {
 
   getPlayerType() {
       if (this.type === "X"){
-          return null;
+          return "/img/croix.png";
       } else {
-          return null;
+        return "/img/cercle.png";
       }
   }
 

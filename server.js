@@ -65,6 +65,7 @@ io.on('connection', (socket) => {
         console.log("new Game");
         socket.join(`room-${++rooms}`);
         socket.player = "j1";
+        socket.playerRoom = `room-${rooms}`;
         var player1 = new Player(data.name, "j1", 'X');
         var game = new Game(`room-${rooms}`,player1);
         io.sockets.adapter.rooms[`room-${rooms}`].game = game;
@@ -76,10 +77,11 @@ io.on('connection', (socket) => {
         const room = io.nsps['/'].adapter.rooms[data.room];
         if (room) {
             if(room.length === 1) {
-                var game = io.sockets.adapter.rooms[`room-${rooms}`].game;
+                var game = io.sockets.adapter.rooms[`${data.room}`].game;
                 socket.join(data.room);
+                socket.playerRoom = data.room;
                 socket.player = "j2";
-                socket.broadcast.to(data.room).emit('player1', {name:game.player1.name});
+                socket.broadcast.to(data.room).emit('player1', {name:game.player1.username});
                 socket.emit('player2', { name: data.name, room: data.room });
                 game.player2 = new Player(data.name, "j2", 'O')
             } else {
@@ -116,5 +118,8 @@ io.on('connection', (socket) => {
 
     socket.on('turnPlayed', (data) => {
 
+    });
+    socket.on('leave_room', (data) => {
+        socket.leave();
     });
 });

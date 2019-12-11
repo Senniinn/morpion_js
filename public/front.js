@@ -115,6 +115,8 @@ $(function(){
     // If the other player wins, this event is received. Notify user game has ended.
     socket.on('gameEnd', (data) => {
         alert(data.message);
+        socket.emit('leave_room');
+        location.reload();
     });
 
 

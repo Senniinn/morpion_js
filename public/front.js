@@ -106,23 +106,17 @@ $(function(){
      * Allow the current player to play now.
      */
     socket.on('turnPlayed', (data) => {
-        const row = data.tile.split('_')[1][0];
-        const col = data.tile.split('_')[1][1];
-        const opponentType = player.getPlayerType() === P1 ? P2 : P1;
 
-        game.updateBoard(opponentType, row, col, data.tile);
-        player.setCurrentTurn(true);
     });
 
     // If the other player wins, this event is received. Notify user game has ended.
     socket.on('gameEnd', (data) => {
-        game.endGame(data.message);
-        socket.leave(data.room);
+        alert(data.message);
     });
 
     socket.on('update_board', (data) => {
         data.board.forEach((casee, index)=>{
-            $('#button_'+index).append(casee);
+            $('#button_'+index).empty().append(casee);
         });
         console.log(data.board);
     });

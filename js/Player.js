@@ -1,5 +1,6 @@
 module.exports = class Player {
-  constructor(name, type) {
+  constructor(username, name, type) {
+    this.username = username;
     this.name = name;
     this.type = type;
     this.currentTurn = true;
@@ -27,9 +28,12 @@ module.exports = class Player {
     $('#turn').text(message);
   }
 
-  getPlayerName() {
-    return this.name;
+  getPlayerUsername() {
+    return this.username;
   }
+    getPlayerName() {
+        return this.name;
+    }
 
   getPlayerType() {
     return this.type;

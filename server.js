@@ -64,7 +64,7 @@ io.on('connection', (socket) => {
         console.log("new Game");
         socket.join(`room-${++rooms}`);
         socket.player = "j1";
-        var player1 = new Player(data.name, 'O');
+        var player1 = new Player(data.name, "j1", 'X');
         var game = new Game(`room-${rooms}`,player1);
         io.sockets.adapter.rooms[`room-${rooms}`].game = game;
         socket.emit('newGame', { name: data.name, room: `room-${rooms}` });
@@ -80,7 +80,7 @@ io.on('connection', (socket) => {
                 socket.player = "j2";
                 socket.broadcast.to(data.room).emit('player1', {name:game.player1.name});
                 socket.emit('player2', { name: data.name, room: data.room });
-                game.player2 = new Player(data.name, 'X')
+                game.player2 = new Player(data.name, "j2", 'O')
             } else {
                 socket.emit('err', { message: 'Sorry, The room is full!' });
             }
@@ -92,16 +92,16 @@ io.on('connection', (socket) => {
 
     socket.on('case_clicked', (data) => {
         var game = io.sockets.adapter.rooms[`room-${rooms}`].game;
-        var  board = game.updateBoard(socket.player, data.buttonId);
-        socket.broadcast.to(game.roomId).emit('update_board', { board: board});
-        console.log(game.roomId);
+        var  board = game.updateBoard(game.findPlayer(socket.player), data.buttonId);
+        if(board.win !== undefined) {
+            io.sockets.to(game.roomId).emit('update_board', {board: board.board});
+            io.sockets.to(game.roomId).emit('gameEnd', {message: board.win});
+        } else {
+            io.sockets.to(game.roomId).emit('update_board', {board: board});
+        }
     });
 
     socket.on('turnPlayed', (data) => {
-        const casee = data.tile.split('_')[1];
-        const opponentType = player.getPlayerType() === P1 ? P2 : P1;
 
-        game.updateBoard(opponentType, casee, data.tile);
-        player.setCurrentTurn(true);
     });
 });

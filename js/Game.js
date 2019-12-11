@@ -7,80 +7,70 @@ module.exports = class Game {
         this.board = ['', '', '', '', '', '', '', '', ''];
     }
 
-    // Remove the menu from DOM, display the gameboard and greet the player.
     displayBoard() {
         return this.board;
-    }
-
-
-    updateBoard(type, casee) {
-        this.board[casee] = type;
-        this.checkWinner();
-        this.moves++;
-
-        console.log(this.board);
-        return this.displayBoard();
     }
 
     getRoomId() {
         return this.roomId;
     }
 
-    // Send an update to the opponent to update their UI's tile
-    playTurn(tile) {
-        const clickedTile = $(tile).attr('id');
+    findPlayer(name) {
+        if(name === this.player1.getPlayerName())
+            return this.player1.getPlayerType();
+        return this.player2.getPlayerType();
+    }
+    updateBoard(type, casee) {
+        this.board[casee] = type;
+        this.moves++;
+        var winner = this.checkWinner();
+        if(winner !== null)
+            return {board: this.displayBoard(), win:winner};
 
-        // Emit an event to update other player that you've played your turn.
-        socket.emit('playTurn', {
-            tile: clickedTile,
-            room: this.getRoomId(),
-        });
+        return this.displayBoard();
     }
 
-
-
     checkWinner() {
-        for (var i = 1; i<9; i=i+3)
+        for (var i = 0; i<9; i=i+3)
         {
             if ((this.board[i] === "X") && (this.board[i+1] === "X") && (this.board[i+2] === "X"))
             {
                 return this.board[i]+" à gagner";
             }
-            else if ((this.board[i] === "O") && (this.board[i+1] === "0") && (this.board[i+2] === "0"))
+            else if ((this.board[i] === "O") && (this.board[i+1] === "O") && (this.board[i+2] === "O"))
             {
                 return this.board[i]+" à gagner";
             }
         }
 
-        for (var i = 1; i<3; i++)
+        for (var i = 0; i<3; i++)
         {
             if ((this.board[i] === "X") && (this.board[i+3] === "X") && (this.board[i+6] === "X"))
             {
                 return this.board[i]+" à gagner";
             }
-            else if ((this.board[i] === "0") && (this.board[i+3] === "0") && (this.board[i+6] === "0"))
+            else if ((this.board[i] === "O") && (this.board[i+3] === "O") && (this.board[i+6] === "O"))
             {
                 return this.board[i]+" à gagner";
             }
         }
 
-        if ((this.board[1] === "X") && (this.board[5] === "X") && (this.board[9] === "X"))
+        if ((this.board[0] === "X") && (this.board[4] === "X") && (this.board[8] === "X"))
         {
-            return this.board[1]+" à gagner";
+            return this.board[O]+" à gagner";
         }
-        else if ((this.board[1] === "0") && (this.board[5] === "0") && (this.board[9] === "0"))
+        else if ((this.board[0] === "O") && (this.board[4] === "O") && (this.board[8] === "O"))
         {
-            return this.board[1]+" à gagner";
+            return this.board[0]+" à gagner";
         }
-        else if ((this.board[3] === "X") && (this.board[5] === "X") && (this.board[7] === "X"))
+        else if ((this.board[2] === "X") && (this.board[4] === "X") && (this.board[6] === "X"))
         {
-            return this.board[3]+" à gagner";
+            return this.board[2]+" à gagner";
         }
-        else if ((this.board[3] === "0") && (this.board[5] === "0") && (this.board[7] === "0"))
+        else if ((this.board[2] === "O") && (this.board[4] === "O") && (this.board[6] === "O"))
         {
-            return this.board[3]+" à gagner";
+            return this.board[2]+" à gagner";
         }
+        return null;
     }
-
-
 };

@@ -32,6 +32,7 @@ const io = require("socket.io")(server);
 io.clients((error, clients) => {
     if (error) throw error;
     console.log(clients);
+    console.log('link : http://10.8.0.2:3000');
 });
 
 io.on('connection', (socket) => {

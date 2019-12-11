@@ -1,8 +1,7 @@
 // $("#chatroom").animate({ scrollTop: $(this).scrollHeight }, "slow");
 $(function(){
     //make connection
-    //var socket = io.connect('http://10.8.0.4:3000');
-    var socket = io.connect('http://127.0.0.1:3000');
+    var socket = io.connect('http://10.8.0.2:3000');
 
     //buttons and inputs
     var message = $("#message");
@@ -53,6 +52,7 @@ $(function(){
             return;
         }
         socket.emit('createGame', { name });
+        $('.tile').prop("disabled", true);
     });
 
     // Join an existing game on the entered roomId. Emit the joinGame event.
@@ -65,6 +65,7 @@ $(function(){
             return;
         }
         socket.emit('joinGame', { name, room: roomID });
+        $('.tile').prop("disabled", false);
     });
     $('#morpion').find("button").on('click', (event) => {
         socket.emit('case_clicked', { buttonId: event.target.id.split("_")[1] });
@@ -87,6 +88,7 @@ $(function(){
         console.log("player 2 connecté");
         const message = `Hello ${data.name}`;
         $('#userHello').html(message);
+        $('.tile').prop("disabled", false);
     });
 
     /**

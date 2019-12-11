@@ -15,7 +15,6 @@ app.set('view engine', 'ejs');
 //middlewares
 app.use(express.static('public'));
 
-
 //routes
 app.get('/', (req, res) => {
     res.render('index')
@@ -23,8 +22,6 @@ app.get('/', (req, res) => {
 
 //Listen on port 3000
 server = app.listen(3000);
-
-
 
 //socket.io instantiation
 const io = require("socket.io")(server);
@@ -36,15 +33,12 @@ io.clients((error, clients) => {
 });
 
 io.on('connection', (socket) => {
+    socket.broadcast.emit('new_message', {message : "Un nouveau joueur à rejoint le serveur", username : "Serveur"});
     console.log('New user connected');
 
     //default username
     socket.username = "Anonymous";
     socket.emit('chat', {chat:chat});
-    //listen on change_username
-    socket.on('change_username', (data) => {
-        socket.username = data.username
-    });
 
     //listen on new_message
     socket.on('new_message', (data) => {
@@ -67,6 +61,7 @@ io.on('connection', (socket) => {
         socket.player = "j1";
         var player1 = new Player(data.name, "j1", 'X');
         var game = new Game(`room-${rooms}`,player1);
+        socket.username = player1.getPlayerUsername();
         io.sockets.adapter.rooms[`room-${rooms}`].game = game;
         socket.emit('newGame', { name: data.name, room: `room-${rooms}` });
     });
@@ -82,6 +77,7 @@ io.on('connection', (socket) => {
                 socket.broadcast.to(data.room).emit('player1', {name:game.player1.name});
                 socket.emit('player2', { name: data.name, room: data.room });
                 game.player2 = new Player(data.name, "j2", 'O')
+                socket.username = game.player2.getPlayerUsername();
             } else {
                 socket.emit('err', { message: 'Sorry, The room is full!' });
             }

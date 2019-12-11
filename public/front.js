@@ -41,7 +41,7 @@ $(function(){
     });
     //Listen on chat
     socket.on('chat', (data) => {
-        data.chat.forEach(message => chatroom.append(`<h6 class='message'>${message.username}: ${message.message}</h6>`))
+        data.chat.forEach(message => chatroom.append(`<h6 class='message'><strong class="text-muted">${message.username}</strong> : ${message.message}</h6>`))
     });
     // Create a new game. Emit newGame event.
     $('#new').on('submit', (e) => {
@@ -86,7 +86,7 @@ $(function(){
      */
     socket.on('player1', (data) => {
         console.log("player 2 connecté");
-        const message = `Hello ${data.name}`;
+        const message = `Hello ${data.username}`;
         $('#userHello').html(message);
         $('.tile').prop("disabled", false);
     });
@@ -96,7 +96,7 @@ $(function(){
      * This event is received when P2 successfully joins the game room.
      */
     socket.on('player2', (data) => {
-        const message = `Hello, ${data.name}`;
+        const message = `Hello, ${data.username}`;
 
         $('.menu').css('display', 'none');
         $('.gameBoard').css('display', 'block');

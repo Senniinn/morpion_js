@@ -1,7 +1,8 @@
 // $("#chatroom").animate({ scrollTop: $(this).scrollHeight }, "slow");
 $(function(){
     //make connection
-    var socket = io.connect('http://10.8.0.4:3000');
+    //var socket = io.connect('http://10.8.0.4:3000');
+    var socket = io.connect('http://127.0.0.1:3000');
 
     //buttons and inputs
     var message = $("#message");
@@ -117,6 +118,13 @@ $(function(){
     socket.on('gameEnd', (data) => {
         game.endGame(data.message);
         socket.leave(data.room);
+    });
+
+    socket.on('update_board', (data) => {
+        data.board.forEach((casee, index)=>{
+            $('#button_'+index).append(casee);
+        });
+        console.log(data.board);
     });
 
     socket.on('err', data => alert(data.message));

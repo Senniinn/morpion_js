@@ -4,49 +4,22 @@ module.exports = class Game {
         this.player1 = player1;
         this.player2 = null;
         this.moves = 0;
+        this.board = ['', '', '', '', '', '', '', '', ''];
     }
 
-    // Create the Game board by attaching event listeners to the buttons.
-    createGameBoard() {
-        function tileClickHandler() {
-            const casee = parseInt(this.id.split('_')[1]);
-            if (!player.getCurrentTurn() || !game) {
-                alert('Its not your turn!');
-                return;
-            }
-
-            if ($(this).prop('disabled')) {
-                alert('This tile has already been played on!');
-                return;
-            }
-
-            // Update board after your turn.
-            game.playTurn(this);
-            game.updateBoard(player.getPlayerType(), casee, this.id);
-
-            player.setCurrentTurn(false);
-            document.getElementById(this.id).className = player.getPlayerType();
-
-            game.checkWinner();
-
-            for (let i = 1; i < 10; i++) {
-                $(`#button_${i}`).on('click', tileClickHandler);
-            }
-        }
-    }
     // Remove the menu from DOM, display the gameboard and greet the player.
-    displayBoard(message) {
-        $('.menu').css('display', 'none');
-        $('.gameBoard').css('display', 'block');
-        $('#userHello').html(message);
-        this.createGameBoard();
+    displayBoard() {
+        return this.board;
     }
 
 
-    updateBoard(type, casee, tile) {
-        $(`#${tile}`).text(type).prop('disabled', true);
+    updateBoard(type, casee) {
         this.board[casee] = type;
+        this.checkWinner();
         this.moves++;
+
+        console.log(this.board);
+        return this.displayBoard();
     }
 
     getRoomId() {
@@ -64,72 +37,50 @@ module.exports = class Game {
         });
     }
 
-    getCase(id) {
-        return document.getElementById("button_"+id);
-    }
+
 
     checkWinner() {
         for (var i = 1; i<9; i=i+3)
         {
-            if ((getCase(i).className === "j1") && (getCase(i+1).className === "j1") && (getCase(i+2).className === "j1"))
+            if ((this.board[i] === "X") && (this.board[i+1] === "X") && (this.board[i+2] === "X"))
             {
-                alert(getCase(i).className+" à gagner")
+                return this.board[i]+" à gagner";
             }
-            else if ((getCase(i).className === "j2") && (getCase(i+1).className === "j2") && (getCase(i+2).className === "j2"))
+            else if ((this.board[i] === "O") && (this.board[i+1] === "0") && (this.board[i+2] === "0"))
             {
-                alert(getCase(i).className+" à gagner")
+                return this.board[i]+" à gagner";
             }
         }
 
         for (var i = 1; i<3; i++)
         {
-            if ((getCase(i).className === "j1") && (getCase(i+3).className === "j1") && (getCase(i+6).className === "j1"))
+            if ((this.board[i] === "X") && (this.board[i+3] === "X") && (this.board[i+6] === "X"))
             {
-                alert(getCase(i).className+" à gagner")
+                return this.board[i]+" à gagner";
             }
-            else if ((getCase(i).className === "j2") && (getCase(i+3).className === "j2") && (getCase(i+6).className === "j2"))
+            else if ((this.board[i] === "0") && (this.board[i+3] === "0") && (this.board[i+6] === "0"))
             {
-                alert(getCase(i).className+" à gagner")
+                return this.board[i]+" à gagner";
             }
         }
 
-        if ((getCase(1).className === "j1") && (getCase(5).className === "j1") && (getCase(9).className === "j1"))
+        if ((this.board[1] === "X") && (this.board[5] === "X") && (this.board[9] === "X"))
         {
-            alert(getCase(1).className+" à gagner")
+            return this.board[1]+" à gagner";
         }
-        else if ((getCase(1).className === "j2") && (getCase(5).className === "j2") && (getCase(9).className === "j2"))
+        else if ((this.board[1] === "0") && (this.board[5] === "0") && (this.board[9] === "0"))
         {
-            alert(getCase(1).className+" à gagner")
+            return this.board[1]+" à gagner";
         }
-        else if ((getCase(3).className === "j1") && (getCase(5).className === "j1") && (getCase(7).className === "j1"))
+        else if ((this.board[3] === "X") && (this.board[5] === "X") && (this.board[7] === "X"))
         {
-            alert(getCase(3).className+" à gagner")
+            return this.board[3]+" à gagner";
         }
-        else if ((getCase(3).className === "j2") && (getCase(5).className === "j2") && (getCase(7).className === "j2"))
+        else if ((this.board[3] === "0") && (this.board[5] === "0") && (this.board[7] === "0"))
         {
-            alert(getCase(3).className+" à gagner")
+            return this.board[3]+" à gagner";
         }
     }
 
-    checkTie() {
-        return this.moves >= 9;
-    }
 
-    // Announce the winner if the current client has won.
-    // Broadcast this on the room to let the opponent know.
-    announceWinner() {
-        const message = `${player.getPlayerName()} wins!`;
-        socket.emit('gameEnded', {
-            room: this.getRoomId(),
-            message,
-        });
-        alert(message);
-        location.reload();
-    }
-
-    // End the game if the other player won.
-    endGame(message) {
-        alert(message);
-        location.reload();
-    }
-}
+};

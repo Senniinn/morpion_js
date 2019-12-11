@@ -92,7 +92,9 @@ io.on('connection', (socket) => {
 
     socket.on('case_clicked', (data) => {
         var game = io.sockets.adapter.rooms[`room-${rooms}`].game;
-        game.updateBoard(socket.player, data.buttonId);
+        var  board = game.updateBoard(socket.player, data.buttonId);
+        socket.broadcast.to(game.roomId).emit('update_board', { board: board});
+        console.log(game.roomId);
     });
 
     socket.on('turnPlayed', (data) => {

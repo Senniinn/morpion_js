@@ -1,14 +1,13 @@
 module.exports = class Player {
   constructor(username, name, type) {
-    this.username = username;
+    this.name = username;
     this.name = name;
     this.type = type;
-    this.currentTurn = true;
-    this.playsArr = 0;
-  }
-
-  static get wins() {
-    return [7, 56, 448, 73, 146, 292, 273, 84];
+    if (name === "j1"){
+      this.currentTurn = true;
+    } else  {
+      this.currentTurn = false;
+    }
   }
 
   // Set the bit of the move played by the player
@@ -36,7 +35,11 @@ module.exports = class Player {
     }
 
   getPlayerType() {
-    return this.type;
+      if (this.type === "X"){
+          return null;
+      } else {
+          return null;
+      }
   }
 
   getCurrentTurn() {

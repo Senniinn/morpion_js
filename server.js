@@ -93,12 +93,24 @@ io.on('connection', (socket) => {
 
     socket.on('case_clicked', (data) => {
         var game = io.sockets.adapter.rooms[`room-${rooms}`].game;
-        var  board = game.updateBoard(game.findPlayer(socket.player), data.buttonId);
-        if(board.win !== undefined) {
-            io.sockets.to(game.roomId).emit('update_board', {board: board.board});
-            io.sockets.to(game.roomId).emit('gameEnd', {message: board.win});
-        } else {
-            io.sockets.to(game.roomId).emit('update_board', {board: board});
+        var playerTurn = game.findPlayer(socket.player).getCurrentTurn();
+        if (playerTurn === false) {
+            socket.emit('err', {message: "ce n'est pas votre tour"})
+        }else {
+            if (game.board[data.buttonId] !== '') {
+                socket.emit('err', {message: "case deja cliqué"})
+            }
+            else {
+                game.changeTurn();
+                var board = game.updateBoard(game.findPlayer(socket.player).getPlayerType(), data.buttonId);
+                if(board.win !== undefined) {
+                    io.sockets.to(game.roomId).emit('update_board', {board: board.board});
+                    io.sockets.to(game.roomId).emit('gameEnd', {message: board.win});
+                } else {
+                    io.sockets.to(game.roomId).emit('update_board', {board: board});
+                    socket.broadcast.to(game.roomId).emit('change_turn');
+                }
+            }
         }
     });
 

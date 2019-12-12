@@ -73,8 +73,8 @@ $(function(){
     // New Game created by current client. Update the UI and create new Game var.
     socket.on('newGame', (data) => {
         const message =
-            `Hello, ${data.name}. Please ask your friend to enter Game ID: 
-      ${data.room}. Waiting for player 2...`;
+            `Salut, ${data.name}. Dit à ton pote de rejoindre la room: 
+      ${data.room}. En attente d'un nouveau joueur ...`;
         $('.menu').css('display', 'none');
         $('.gameBoard').css('display', 'block');
         $('#userHello').html(message);

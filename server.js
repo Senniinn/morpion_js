@@ -27,10 +27,12 @@ io.clients((error, clients) => {
     console.log('link : http://10.8.0.2:3000');
 });
 
+
 io.on('connection', (socket) => {
     socket.broadcast.emit('new_message', {message : "Un nouveau joueur à rejoint le serveur", username : "Serveur"});
 
     socket.username = "Anonymous";
+    socket.playerRoom = "NIG";
     socket.emit('chat', {chat:chat});
 
     socket.on('new_message', (data) => {
@@ -53,7 +55,7 @@ io.on('connection', (socket) => {
                 socket.username = game.player2.getPlayerUsername();
                 socket.playerRoom = data.room;
                 socket.player = "j2";
-                socket.emit('ask_username');
+                socket.emit('ask_username', {});
             } else {
                 socket.emit('err', { message: 'Sorry, The room is full!' });
             }

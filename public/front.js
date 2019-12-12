@@ -1,5 +1,5 @@
 $(function(){
-    var socket = io.connect('http://10.8.0.4:3000');
+    var socket = io.connect('http://10.8.0.2:3000');
 
     var message = $("#message");
     var username = $("#username");
@@ -21,7 +21,7 @@ $(function(){
     socket.on("new_message", (data) => {
         feedback.html('');
         message.val('');
-        chatroom.append(`<h6 class='message'>${data.username}: ${data.message}</h6>`)
+        chatroom.append(`<h6 class='message'> ${data.username} <a href="/${data.room}">${data.room}</a>: ${data.message}</h6>`)
     });
 
     send_username.submit(e =>{
@@ -38,7 +38,7 @@ $(function(){
     });
 
     socket.on('chat', (data) => {
-        data.chat.forEach(message => chatroom.append(`<h6 class='message'><strong class="text-muted">${message.username}</strong> : ${message.message}</h6>`))
+        data.chat.forEach(message => chatroom.append(`<h6 class='message'><strong class="text-muted">${message.username}</strong><a href="/${data.room}">Rejoindre</a> : ${message.message}</h6>`))
     });
 
     $('#new').on('submit', (e) => {
@@ -111,7 +111,8 @@ $(function(){
     });
 
     socket.on('ask_username', (data) => {
-        socket.emit('change_username', {username: date.username})
+        var username = prompt("Quel est votre nom ?");
+        socket.emit('change_username', {username: username})
     });
 
     socket.on('err', data => alert(data.message));

@@ -1,5 +1,5 @@
 $(function(){
-    var socket = io.connect('http://10.8.0.2:3000');
+    var socket = io.connect('http://127.0.0.1:3000');
 
     var message = $("#message");
     var username = $("#username");
@@ -66,6 +66,11 @@ $(function(){
 
     $('#morpion').find("button").on('click', (event) => {
         socket.emit('case_clicked', { buttonId: event.target.id.split("_")[1] });
+    });
+
+    socket.on('match_null', (data) => {
+        alert("match null !");
+        window.location = "/";
     });
 
     socket.on('newGame', (data) => {

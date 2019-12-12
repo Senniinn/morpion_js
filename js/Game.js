@@ -3,6 +3,7 @@ module.exports = class Game {
         this.roomId = roomId;
         this.player1 = player1;
         this.player2 = null;
+        this.move = 0;
         this.board = ['', '', '', '', '', '', '', '', ''];
         this.inGameBoard = ['', '', '', '', '', '', '', '', ''];
     }
@@ -26,9 +27,19 @@ module.exports = class Game {
         if(winner !== null)
             return {board: this.displayBoard(), win:winner};
 
+        const nul = this.checkMove();
+        if(nul !== null)
+            return nul;
+
         return this.displayBoard();
     }
 
+    checkMove = () => {
+        this.move++;
+        if(this.move === 9)
+            return {board: this.displayBoard(), win: null}
+        return null;
+    };
     currentPlayer = () => this.player1.currentTurn === true ? this.player1 : this.player2;
 
     checkWinner() {

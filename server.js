@@ -117,8 +117,14 @@ io.on('connection', (socket) => {
                 else {
                     var board = game.updateBoard(game.findPlayer(socket.player).getPlayerType(), game.findPlayer(socket.player).getPlayerImg(), data.buttonId);
                     if (board.win !== undefined) {
-                        io.sockets.to(game.roomId).emit('update_board', {board: board.board});
-                        io.sockets.to(game.roomId).emit('gameEnd', {message: board.win});
+                        if (board.win === null) {
+                            io.sockets.to(game.roomId).emit('update_board', {board: board.board});
+                            io.sockets.to(game.roomId).emit('match_null');
+                        }else {
+                            io.sockets.to(game.roomId).emit('update_board', {board: board.board});
+                            io.sockets.to(game.roomId).emit('gameEnd', {message: board.win});
+
+                        }
                     } else {
                         io.sockets.to(game.roomId).emit('update_board', {board: board});
                         socket.broadcast.to(game.roomId).emit('change_turn');

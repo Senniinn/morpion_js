@@ -6,29 +6,13 @@ module.exports = class Player {
         this.currentTurn = name === "j1";
     }
 
-    setCurrentTurn(turn) {
-        this.currentTurn = turn;
-        const message = turn ? 'Your turn' : 'Waiting for Opponent';
-        $('#turn').text(message);
-    }
+    getPlayerUsername = () => this.username;
 
-    getPlayerUsername() {
-        return this.username;
-    }
+    getPlayerName = () => this.name;
 
-    getPlayerName() {
-        return this.name;
-    }
+    getPlayerType = () => this.type;
 
-    getPlayerType() {
-        return this.type;
-    }
+    getPlayerImg = () => this.getPlayerType() === "X" ? "/img/croix.png" : "/img/cercle.png";
 
-    getPLayerImg() {
-        return this.type === "X" ? "/img/croix.png" : "/img/cercle.png";
-    }
-
-    getCurrentTurn() {
-        return this.currentTurn;
-    }
+    getCurrentTurn = () => this.currentTurn;
 };

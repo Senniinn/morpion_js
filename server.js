@@ -44,12 +44,12 @@ io.on('connection', (socket) => {
     socket.on('new_message', (data) => {
         chat.unshift({username: socket.username, message:data.message});
         //broadcast the new message
-        io.sockets.emit('new_message', {message : data.message, username : socket.username});
+        io.sockets.emit('new_message', {message : data.message, username : socket.username, room : socket.playerRoom});
     });
 
     //listen on typing
     socket.on('typing', (data) => {
-        socket.broadcast.emit('typing', {username : socket.username})
+        socket.broadcast.emit('typing', {username : socket.username, room : socket.playerRoom})
     });
 
     socket.on('play', () => {

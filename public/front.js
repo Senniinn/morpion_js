@@ -21,7 +21,10 @@ $(function(){
     socket.on("new_message", (data) => {
         feedback.html('');
         message.val('');
-        chatroom.append(`<h6 class='message'> ${data.username} <a href="/${data.room}">${data.room}</a>: ${data.message}</h6>`)
+        link = (data.room !== undefined)
+            ? '<a href="' + data.room + '">' + data.room + '</a>'
+            :'';
+        chatroom.append(`<h6 class='message'> <strong class="text-muted">${data.username}</strong> ${link}: ${data.message}</h6>`)
     });
 
     send_username.submit(e =>{
@@ -38,7 +41,10 @@ $(function(){
     });
 
     socket.on('chat', (data) => {
-        data.chat.forEach(message => chatroom.append(`<h6 class='message'><strong class="text-muted">${message.username}</strong><a href="/${data.room}">Rejoindre</a> : ${message.message}</h6>`))
+        link = (data.room !== undefined)
+            ? '<a href="' + data.room + '">' + data.room + '</a>'
+            :'';
+        data.chat.forEach(message => chatroom.append(`<h6 class='message'><strong class="text-muted">${message.username}</strong> ${link} : ${message.message}</h6>`))
     });
 
     $('#new').on('submit', (e) => {
@@ -74,8 +80,11 @@ $(function(){
     });
 
     socket.on('newGame', (data) => {
+        const name = (data.name === undefined)
+            ?'Michel'
+            :data.name;
         const message =
-            `Salut, ${data.name}. Dit à ton pote de rejoindre la room: 
+            `Salut, ${name}. Dit à ton pote de rejoindre la room: 
       ${data.room}. En attente d'un nouveau joueur ...`;
         $('.menu').css('display', 'none');
         $('.gameBoard').css('display', 'block');
@@ -84,13 +93,17 @@ $(function(){
 
     socket.on('player1', (data) => {
         console.log("player 2 connecté");
-        const message = `Hello ${data.username}`;
+        const message = (data.name === undefined)
+            ? `Hello, Michel`
+            : `Hello, ${data.name}`;
         $('#userHello').html(message);
         $('.tile').prop("disabled", false);
     });
 
     socket.on('player2', (data) => {
-        const message = `Hello, ${data.username}`;
+        const message = (data.name === undefined)
+            ? `Hello, Michel`
+            : `Hello, ${data.name}`;
 
         $('.menu').css('display', 'none');
         $('.gameBoard').css('display', 'block');

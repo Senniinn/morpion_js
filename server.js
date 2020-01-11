@@ -32,7 +32,6 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('new_message', {message : "Un nouveau joueur à rejoint le serveur", username : "Serveur"});
 
     socket.username = "Anonymous";
-    socket.playerRoom = "NIG";
     socket.emit('chat', {chat:chat});
 
     socket.on('new_message', (data) => {
@@ -50,12 +49,12 @@ io.on('connection', (socket) => {
                 const game = io.sockets.adapter.rooms[`${data.room}`].game;
                 socket.join(data.room);
                 socket.broadcast.to(data.room).emit('player1', {name:game.player1.username});
-                socket.emit('player2', { name: data.name, room: data.room });
                 game.player2 = new Player(data.name, "j2", 'O');
                 socket.username = game.player2.getPlayerUsername();
                 socket.playerRoom = data.room;
                 socket.player = "j2";
                 socket.emit('ask_username', {});
+                socket.emit('player2', { name: socket.username, room: data.room });
             } else {
                 socket.emit('err', { message: 'Sorry, The room is full!' });
             }
@@ -68,8 +67,11 @@ io.on('connection', (socket) => {
             socket.player = "j1";
             socket.playerRoom = `${roomId}`;
             io.sockets.adapter.rooms[`${roomId}`].game = game;
-            socket.emit('newGame', { name: data.name, room: `${roomId}` });
             socket.emit('ask_username');
+            socket.emit('newGame', { name: socket.username, room: `${roomId}` });
+
+            game.player1.username = socket.username;
+
         }
     });
     socket.on('createGame', (data) => {
